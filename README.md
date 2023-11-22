@@ -1,3 +1,4 @@
+## Summary
 
 Suppose we have covariates $X \in \mathbb{R}^{N \times K}$ and observations $y \in \mathbb{R}^N$, where our observation model is $y_i \sim \mathcal{N}(x_i^\top w, \sigma^2)$. Here, $w \in \mathbb{R}^K$ are unknown weights.
 
@@ -14,5 +15,8 @@ Here we consider a third option in between these two, which I will call "Group A
 
 3. __Group ARD__: $w \sim \mathcal{N}(0, \alpha_{c_i}^{-1})$
 
+## References
+
 [1] Tipping, Michael E. "Sparse Bayesian learning and the relevance vector machine." Journal of machine learning research 1.Jun (2001): 211-244.
+
 [2] Yuan, Ming, and Yi Lin. "Model selection and estimation in regression with grouped variables." Journal of the Royal Statistical Society Series B: Statistical Methodology 68.1 (2006): 49-67.
