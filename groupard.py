@@ -168,6 +168,7 @@ plt.legend(fontsize=8)
 plt.xlabel('# iterations')
 plt.ylabel('$R^2$')
 plt.ylim([0,1])
+plt.title('Variance explained')
 
 # plot scatter of true and estimated weights
 plt.subplot(nrows,ncols,c); c += 1
@@ -177,10 +178,12 @@ plt.plot(plt.xlim(), plt.xlim(), 'k-', zorder=-1, alpha=0.2)
 plt.axis('equal')
 plt.xlabel('$\mu$')
 plt.ylabel('$\widehat{\mu}$')
+plt.title('Estimated vs. True weights')
 
 # plot estimated weights
 plt.subplot(nrows,ncols,c); c += 1
 plot_weights(mu_hat, groups, ylabel='$\widehat{\mu}$')
+plt.title('Estimated weights')
 
 # plot scatter of true and estimated inverse prior variances
 plt.subplot(nrows,ncols,c); c += 1
@@ -192,8 +195,10 @@ plt.plot(plt.xlim(), plt.xlim(), 'k-', zorder=-1, alpha=0.2)
 plt.xscale('log'); plt.yscale('log')
 plt.xlabel('$\\alpha^{-1}$')
 plt.ylabel('$\widehat{\\alpha}^{-1}$')
+plt.title('Inverse prior variances')
 
 # plot true weights
 plt.subplot(nrows,ncols,c); c += 1
 plot_weights(mu, groups)
+plt.title('True weights')
 plt.tight_layout()
