@@ -15,6 +15,8 @@ Here we consider a third option in between these two, which I will call "Group A
 
 3. __Group ARD__: $w \sim \mathcal{N}(0, \alpha_{c_i}^{-1})$
 
+We can estimate the inverse prior variances using similar methods proposed in Appendix 1 of [1].
+
 ## References
 
 [1] Tipping, Michael E. "Sparse Bayesian learning and the relevance vector machine." Journal of machine learning research 1.Jun (2001): 211-244.
