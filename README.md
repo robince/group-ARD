@@ -17,8 +17,12 @@ Here we consider a third option in between these two, which I will call "Group A
 
 We can estimate the inverse prior variances using similar methods proposed in Appendix 1 of [1].
 
+For what it's worth, this model was implemented in [3] but called "Group-sparse Bayesian linear discriminant analysis" (?).
+
 ## References
 
 [1] Tipping, Michael E. "Sparse Bayesian learning and the relevance vector machine." Journal of machine learning research 1.Jun (2001): 211-244.
 
 [2] Yuan, Ming, and Yi Lin. "Model selection and estimation in regression with grouped variables." Journal of the Royal Statistical Society Series B: Statistical Methodology 68.1 (2006): 49-67.
+
+[3] Yu, Tianyou, et al. "Grouped automatic relevance determination and its application in channel selection for P300 BCIs." IEEE Transactions on Neural Systems and Rehabilitation Engineering 23.6 (2015): 1068-1077.
