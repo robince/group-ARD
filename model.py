@@ -46,7 +46,7 @@ def fit(X, y, prior='Group ARD', groups=None, alpha_threshold=1e4, alpha_init=1e
         elif prior == 'ARD':
             # ARD update
             alpha_hats[keep_alpha] = gamma_hats / (mu_hat[keep_alpha]**2)
-        elif prior == 'Group ARD':
+        elif prior == 'GroupARD':
             # Group ARD update
             for k in range(len(alpha_hats)):
                 ix = (group_ests == k) & keep_alpha

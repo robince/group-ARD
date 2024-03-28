@@ -6,7 +6,7 @@ from sklearn.utils.validation import _check_sample_weight
 from sklearn.linear_model._base import LinearModel, _preprocess_data
 
 class GroupARDRegression(RegressorMixin, LinearModel):
-    def __init__(self, *, prior='Group ARD', groups=None, alpha_threshold=1e4, alpha_init=1e-5, n_iter=500, tol=1.0e-3, 
+    def __init__(self, *, prior='Ridge', groups=None, alpha_threshold=1e4, alpha_init=1e-5, n_iter=500, tol=1.0e-3, 
                  fit_intercept=True, copy_X=True, verbose=False):
         self.prior = prior
         self.groups = groups
@@ -57,12 +57,12 @@ class GroupARDRegression(RegressorMixin, LinearModel):
             group_ests = np.zeros(X.shape[-1]).astype(int)
         elif self.prior == 'ARD':
             group_ests = list(np.arange(X.shape[-1]))
-        elif self.prior == 'Group ARD':
+        elif self.prior == 'GroupARD':
             if self.groups is None:
-                raise Exception("Must provide group labels when using 'Group ARD' prior")
+                raise Exception("Must provide group labels when using 'GroupARD' prior")
             group_ests = self.groups.copy()
         else:
-            raise Exception("Unrecognized prior. Options: ['Ridge', 'ARD', 'Group ARD']")
+            raise Exception("Unrecognized prior. Options: ['Ridge', 'ARD', 'GroupARD']")
 
         # initialize hyperparameter estimates
         alpha_hats = self.alpha_init*np.ones(len(np.unique(group_ests)))
@@ -93,7 +93,7 @@ class GroupARDRegression(RegressorMixin, LinearModel):
             elif self.prior == 'ARD':
                 # ARD update
                 alpha_hats[keep_alpha] = gamma_hats / (mu_hat[keep_alpha]**2)
-            elif self.prior == 'Group ARD':
+            elif self.prior == 'GroupARD':
                 # Group ARD update
                 for k in range(len(alpha_hats)):
                     ix = (group_ests == k) & keep_alpha
