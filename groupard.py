@@ -6,10 +6,11 @@ from sklearn.utils.validation import _check_sample_weight
 from sklearn.linear_model._base import LinearModel, _preprocess_data
 
 class GroupARDRegression(RegressorMixin, LinearModel):
-    def __init__(self, *, prior='Ridge', groups=None, alpha_threshold=1e4, alpha_init=1e-5, n_iter=500, tol=1.0e-3, 
+    def __init__(self, *, prior='GroupARD', groups=None, extend_groups=False, alpha_threshold=1e4, alpha_init=1e-5, n_iter=500, tol=1.0e-3, 
                  fit_intercept=True, copy_X=True, verbose=False):
         self.prior = prior
         self.groups = groups
+        self.extend_groups = extend_groups
         self.alpha_threshold = alpha_threshold
         self.alpha_init = alpha_init
         self.n_iter = n_iter
@@ -52,6 +53,7 @@ class GroupARDRegression(RegressorMixin, LinearModel):
 
         self.X_offset_ = X_offset_
         self.X_scale_ = X_scale_
+        n_samples, n_features = X.shape
 
         if self.prior == 'Ridge':
             group_ests = np.zeros(X.shape[-1]).astype(int)
@@ -60,7 +62,18 @@ class GroupARDRegression(RegressorMixin, LinearModel):
         elif self.prior == 'GroupARD':
             if self.groups is None:
                 raise Exception("Must provide group labels when using 'GroupARD' prior")
-            group_ests = self.groups.copy()
+            if not self.extend_groups and len(self.groups)!=n_features:
+                raise Exception("group definitions not compatible with data")
+            if self.extend_groups:
+                if len(self.groups)>n_features:
+                    group_ests = self.groups[:n_features].copy()
+                elif len(self.groups)<n_features:
+                    new_group = np.array((n_features-len(self.groups))*[np.max(self.groups)+1])
+                    group_ests = np.concatenate([self.groups, new_group])
+                else:
+                    group_ests = self.groups.copy()
+            else:
+                group_ests = self.groups.copy()
         else:
             raise Exception("Unrecognized prior. Options: ['Ridge', 'ARD', 'GroupARD']")
 
