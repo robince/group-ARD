@@ -2,18 +2,36 @@ import numpy as np
 from scipy.linalg import pinvh 
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.linear_model._base import _rescale_data
-from sklearn.utils.validation import _check_sample_weight
+from sklearn.utils.validation import _check_sample_weight, check_X_y
 from sklearn.linear_model._base import LinearModel, _preprocess_data
+from sklearn.linear_model import ARDRegression, BayesianRidge
+
 
 class GroupARDRegression(RegressorMixin, LinearModel):
-    def __init__(self, *, prior='GroupARD', groups=None, extend_groups=False, alpha_threshold=1e4, alpha_init=1e-5, n_iter=500, tol=1.0e-3, 
+    """Bayesian ARD regression.
+
+    Fit the weights of a regression model, using an ARD prior. The weights of
+    the regression model are assumed to be in Gaussian distributions.
+    Also estimate the parameters lambda (precisions of the distributions of the
+    weights) and alpha (precision of the distribution of the noise).
+    The estimation is done by an iterative procedures (Evidence Maximization)
+
+    Parameters
+    ----------
+    max_iter : int, default=None
+        Maximum number of iterations. If `None`, it corresponds to `max_iter=300`.    
+        
+        
+    """
+    
+    def __init__(self, *, prior='GroupARD', groups=None, extend_groups=False, alpha_threshold=1e4, alpha_init=1e-5, max_iter=300, tol=1.0e-3, 
                  fit_intercept=True, copy_X=True, verbose=False):
         self.prior = prior
         self.groups = groups
         self.extend_groups = extend_groups
         self.alpha_threshold = alpha_threshold
         self.alpha_init = alpha_init
-        self.n_iter = n_iter
+        self.max_iter = max_iter
         self.tol = tol
         self.fit_intercept = fit_intercept
         self.copy_X = copy_X
@@ -26,14 +44,14 @@ class GroupARDRegression(RegressorMixin, LinearModel):
         # Return self
             # define group labels used for fitting (based on prior)
         
-        if self.n_iter < 1:
+        if self.max_iter < 1:
             raise ValueError(
-                "n_iter should be greater than or equal to 1. Got {!r}.".format(
-                    self.n_iter
+                "max_iter should be greater than or equal to 1. Got {!r}.".format(
+                    self.max_iter
                 )
             )
 
-        X, y = self._validate_data(X, y, dtype=np.float64, y_numeric=True)
+        X, y = check_X_y(X, y, dtype=np.float64, y_numeric=True)
 
         if sample_weight is not None:
             sample_weight = _check_sample_weight(sample_weight, X, dtype=X.dtype)
@@ -85,7 +103,7 @@ class GroupARDRegression(RegressorMixin, LinearModel):
         keep_alpha = np.ones(X.shape[-1]).astype(bool)
         mu_hat_prev = None
         results = []
-        for iter_ in range(self.n_iter):
+        for iter_ in range(self.max_iter):
             # update posterior mean and covariance
             a_hats = np.array([alpha_hats[g] for g in group_ests])[keep_alpha]
             Sigma_hat = pinvh(beta_hat*np.dot(X[:,keep_alpha].T, X[:,keep_alpha]) + np.diag(a_hats))
@@ -134,7 +152,7 @@ class GroupARDRegression(RegressorMixin, LinearModel):
                 'a_hats': a_hats.copy(),
                 'beta_hat': beta_hat})
             
-        self.n_iter_ = iter_ + 1
+        self.max_iter_ = iter_ + 1
         
         self._set_intercept(X_offset_, y_offset_, X_scale_)
 
